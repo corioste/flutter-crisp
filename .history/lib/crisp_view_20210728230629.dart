@@ -60,9 +60,6 @@ class _CrispViewState extends State<CrispView> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _isLoading = true;
-    });
 
     _javascriptString = """
       var a = setInterval(function(){
@@ -80,52 +77,49 @@ class _CrispViewState extends State<CrispView> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: _isLoading
-          ? widget.loadingWidget
-          : InAppWebView(
-              initialUrlRequest: URLRequest(
-                url: Uri.parse(_crispEmbedUrl(
-                  websiteId: widget.crispMain.websiteId,
-                  locale: widget.crispMain.locale,
-                  userToken: widget.crispMain.userToken,
-                )),
-              ),
-              initialOptions: _options,
-              onWebViewCreated: (InAppWebViewController controller) {
-                _webViewController = controller;
-              },
-              onLoadStop: (InAppWebViewController controller, Uri? url) async {
-                _webViewController?.evaluateJavascript(
-                    source: _javascriptString!);
-                _isLoading = false;
-              },
-              shouldOverrideUrlLoading: (controller, navigationAction) async {
-                var uri = navigationAction.request.url;
-                var url = uri.toString();
+      body: InAppWebView(
+        initialUrlRequest: URLRequest(
+          url: Uri.parse(_crispEmbedUrl(
+            websiteId: widget.crispMain.websiteId,
+            locale: widget.crispMain.locale,
+            userToken: widget.crispMain.userToken,
+          )),
+        ),
+        initialOptions: _options,
+        onWebViewCreated: (InAppWebViewController controller) {
+          _webViewController = controller;
+        },
+        onLoadStop: (InAppWebViewController controller, Uri? url) async {
+          _webViewController?.evaluateJavascript(source: _javascriptString!);
+          print("STOP");
+        },
+        shouldOverrideUrlLoading: (controller, navigationAction) async {
+          var uri = navigationAction.request.url;
+          var url = uri.toString();
 
-                if (uri?.host != 'go.crisp.chat') {
-                  if ([
-                    "http",
-                    "https",
-                    "tel",
-                    "mailto",
-                    "file",
-                    "chrome",
-                    "data",
-                    "javascript",
-                    "about"
-                  ].contains(uri?.scheme)) {
-                    if (await canLaunch(url)) {
-                      await launch(url);
+          if (uri?.host != 'go.crisp.chat') {
+            if ([
+              "http",
+              "https",
+              "tel",
+              "mailto",
+              "file",
+              "chrome",
+              "data",
+              "javascript",
+              "about"
+            ].contains(uri?.scheme)) {
+              if (await canLaunch(url)) {
+                await launch(url);
 
-                      return NavigationActionPolicy.CANCEL;
-                    }
-                  }
-                }
+                return NavigationActionPolicy.CANCEL;
+              }
+            }
+          }
 
-                return NavigationActionPolicy.ALLOW;
-              },
-            ),
+          return NavigationActionPolicy.ALLOW;
+        },
+      ),
     );
   }
 }
