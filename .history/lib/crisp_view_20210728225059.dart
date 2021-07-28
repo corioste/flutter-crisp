@@ -46,9 +46,9 @@ class _CrispViewState extends State<CrispView> {
 
   InAppWebViewGroupOptions _options = InAppWebViewGroupOptions(
     crossPlatform: InAppWebViewOptions(
-        useShouldOverrideUrlLoading: true,
-        mediaPlaybackRequiresUserGesture: false,
-        cacheEnabled: true),
+      useShouldOverrideUrlLoading: true,
+      mediaPlaybackRequiresUserGesture: false,
+    ),
     android: AndroidInAppWebViewOptions(
         useHybridComposition: true,
         cacheMode: AndroidCacheMode.LOAD_CACHE_ONLY),
@@ -91,7 +91,6 @@ class _CrispViewState extends State<CrispView> {
         },
         onLoadStop: (InAppWebViewController controller, Uri? url) async {
           _webViewController?.evaluateJavascript(source: _javascriptString!);
-          print("STOP");
         },
         shouldOverrideUrlLoading: (controller, navigationAction) async {
           var uri = navigationAction.request.url;

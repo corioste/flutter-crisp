@@ -90,8 +90,8 @@ class _CrispViewState extends State<CrispView> {
           _webViewController = controller;
         },
         onLoadStop: (InAppWebViewController controller, Uri? url) async {
-          _webViewController?.evaluateJavascript(source: _javascriptString!);
-          print("STOP");
+          _webViewController?.evaluateJavascript(source: _javascriptString!
+          print("STOP"););
         },
         shouldOverrideUrlLoading: (controller, navigationAction) async {
           var uri = navigationAction.request.url;
