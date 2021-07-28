@@ -128,12 +128,11 @@ class _CrispViewState extends State<CrispView> {
                 return NavigationActionPolicy.ALLOW;
               },
             ),
-            if (widget.loadingWidget != null)
-              _isLoading
-                  ? Center(
-                      child: widget.loadingWidget,
-                    )
-                  : Stack(),
+            _isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Stack(),
           ],
         ));
   }
