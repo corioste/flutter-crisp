@@ -49,6 +49,8 @@ class _CrispViewState extends State<CrispView> {
     crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,
         mediaPlaybackRequiresUserGesture: false,
+        useOnLoadResource: true,
+        javaScriptEnabled: true,
         cacheEnabled: true),
     android: AndroidInAppWebViewOptions(
         useHybridComposition: true, cacheMode: AndroidCacheMode.LOAD_DEFAULT),
@@ -65,9 +67,12 @@ class _CrispViewState extends State<CrispView> {
     });
 
     _javascriptString = """
+      let status = "loading";
       var a = setInterval(function(){
         if (typeof \$crisp !== 'undefined'){
           ${widget.crispMain.commands.join(';\n')}
+          status = "done"
+          console.log(status)
           clearInterval(a);
         }
       },500)
@@ -94,6 +99,7 @@ class _CrispViewState extends State<CrispView> {
               onWebViewCreated: (InAppWebViewController controller) {
                 _webViewController = controller;
               },
+              onLoadResource: (controller, resource) => {print("resource")},
               onLoadStop: (InAppWebViewController controller, Uri? url) async {
                 _webViewController?.evaluateJavascript(
                     source: _javascriptString!);
